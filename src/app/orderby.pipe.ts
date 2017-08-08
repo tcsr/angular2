@@ -23,8 +23,7 @@ export class OrderbyPipe implements PipeTransform {
          return this.orderByComparator(item2[orderBy], item1[orderBy]);
        });
      }
- 
- }
+  }
  
  orderByComparator(a:any, b:any):number{
  
