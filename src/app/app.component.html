@@ -1,3 +1,33 @@
-<h1>
-  {{title}}
-</h1>
+<div>
+  <app-header></app-header>
+  <div *ngFor="let md of myData | orderby: 'order'">
+    <md-card>
+      <md-card-content>
+        <div [ngSwitch]="md.type">
+           <div><label>{{md.label}}</label></div>
+           {{md.order}}
+          <div *ngSwitchCase="'text'">
+            <input type="text" name="" value="">
+          </div>
+          <div *ngSwitchCase="'password'">
+            <input type="password">
+          </div>
+          <div *ngSwitchCase="'dropdown'">
+            <select>
+              <option>
+                one
+              </option>
+            </select>
+          </div>
+          <div *ngSwitchCase="'radio'">
+            <input type="radio">Radio
+          </div>
+          <div *ngSwitchCase="'checkbox'">
+            <input type="checkbox">checkbox
+          </div>
+          <div *ngSwitchDefault>No Control</div>
+        </div>
+      </md-card-content>
+    </md-card>
+  </div>
+</div>
