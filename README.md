@@ -2,6 +2,40 @@
 
 https://www.intertech.com/Blog/angular-best-practice-unsubscribing-rxjs-observables/
 
+https://blog.angulartraining.com/rxjs-subjects-a-tutorial-4dcce0e9637f
+
+https://stackoverflow.com/questions/49176474/angular-remove-item-from-behaviorsubjectany
+
+https://medium.com/thecodecampus-knowledge/the-easiest-way-to-unsubscribe-from-observables-in-angular-5abde80a5ae3
+
+https://medium.com/angular-in-depth/the-best-way-to-unsubscribe-rxjs-observable-in-the-angular-applications-d8f9aa42f6a0
+
+
+
+eventsList = [];
+
+private eventTracker = new BehaviorSubject<[]>(undefined);
+
+getEvents(): BehaviorSubject<any> {
+    this.eventTracker.next(Object.assign(this.eventsList));
+    return this.eventTracker;
+  }
+
+  setEvent(eventKey, eventValue): void {
+    this.eventsList.push({ eventKey: eventValue });
+  }
+
+
+
+this.auth.getEvents().subscribe(events => {
+      events.forEach(event => {
+        if (event.hasOwnProperty(key)) { // here the key is the one which is set from the const.events.key
+          console.log(event);
+           // handle the functionality as per the requirement
+        }
+      });
+    });
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0.
 
 ## Development server
