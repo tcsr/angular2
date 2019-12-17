@@ -1,5 +1,9 @@
 # TApp
 
+https://codepen.io/b3hrooz/pen/ygXbEX			
+https://stackblitz.com/edit/angular-fewyhw
+https://stackoverflow.com/questions/51892160/expandable-search-bar-in-angular-6
+
 https://www.intertech.com/Blog/angular-best-practice-unsubscribing-rxjs-observables/
 
 https://blog.angulartraining.com/rxjs-subjects-a-tutorial-4dcce0e9637f
