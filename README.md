@@ -4,6 +4,12 @@ https://codepen.io/b3hrooz/pen/ygXbEX
 https://stackblitz.com/edit/angular-fewyhw
 https://stackoverflow.com/questions/51892160/expandable-search-bar-in-angular-6
 
+https://bootsnipp.com/snippets/Pb5PX
+https://www.solodev.com/blog/web-design/creating-a-toggled-search-bar.stml
+https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_anim_search
+
+========================================================================================
+
 https://www.intertech.com/Blog/angular-best-practice-unsubscribing-rxjs-observables/
 
 https://blog.angulartraining.com/rxjs-subjects-a-tutorial-4dcce0e9637f
