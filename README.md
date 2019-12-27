@@ -1,5 +1,14 @@
 # TApp
 
+var options = {
+    timeZone: 'Brazil/East',
+    year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', second: 'numeric',
+} 
+
+new Date().toLocaleString([], options)
+------------------------------------------------
+
 https://codepen.io/b3hrooz/pen/ygXbEX			
 https://stackblitz.com/edit/angular-fewyhw
 https://stackoverflow.com/questions/51892160/expandable-search-bar-in-angular-6
