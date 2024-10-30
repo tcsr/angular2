@@ -1,5 +1,49 @@
 # TApp
 
+
+const data = [
+  {
+    id: 1,
+    primaryFlag: true,
+    showCountry: "Ghana",
+    nIdTypeName: "VoterId"
+  },
+  {
+    id: 2,
+    primaryFlag: false,
+    showCountry: "Ghana",
+    nIdTypeName: "Driving License"
+  }
+];
+
+const combinedData = Object.values(
+  data.reduce((acc, curr, index) => {
+    const countryKey = curr.showCountry;
+
+    // If country entry doesn't exist, create it
+    if (!acc[countryKey]) {
+      acc[countryKey] = {
+        id: index + 1,
+        country: curr.showCountry,
+        primaryNationalId: "",
+        secondaryNationalId: ""
+      };
+    }
+
+    // Check the primaryFlag to assign to primary or secondary NationalId
+    if (curr.primaryFlag) {
+      acc[countryKey].primaryNationalId = curr.nIdTypeName;
+    } else {
+      acc[countryKey].secondaryNationalId = curr.nIdTypeName;
+    }
+
+    return acc;
+  }, {})
+);
+
+console.log(combinedData);
+
+
 var options = {
     timeZone: 'Brazil/East',
     year: 'numeric', month: 'numeric', day: 'numeric',
