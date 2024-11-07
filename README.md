@@ -186,6 +186,127 @@ Socket.io on the Angular Side: The Angular service establishes a connection and 
 Automatic UI Update: The Angular component listens for data changes and updates the displayed summary counts in real-time.
 This structure allows the Angular app to receive real-time data updates from the Node.js backend, which fetches data from PostgreSQL and sends it over WebSocket.
 
+
+===================
+
+To ensure real-time updates from the database to the server API without constant polling, we can use PostgreSQL's LISTEN/NOTIFY feature. This approach lets the database notify the Node.js server only when relevant data changes occur, reducing unnecessary load and providing near-instant updates.
+
+Here’s how to set it up:
+
+Step 1: Database Setup with PostgreSQL's LISTEN/NOTIFY
+Create a Trigger Function:
+
+Define a trigger function in PostgreSQL that will notify the server whenever an update occurs in the estimation_summary table.
+sql
+Copy code
+CREATE OR REPLACE FUNCTION notify_estimation_update() RETURNS TRIGGER AS $$
+BEGIN
+    PERFORM pg_notify('estimation_updates', 'Data has been updated');
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+Create a Trigger:
+
+Attach the trigger to the table to fire whenever an insert, update, or delete occurs.
+sql
+Copy code
+CREATE TRIGGER estimation_update_trigger
+AFTER INSERT OR UPDATE OR DELETE ON estimation_summary
+FOR EACH ROW EXECUTE FUNCTION notify_estimation_update();
+Step 2: Backend Setup with Node.js
+Install PostgreSQL and Socket.io (if not already installed):
+
+bash
+Copy code
+npm install pg socket.io express cors dotenv
+Update the db.js Connection File to Listen for Notifications:
+
+Update the PostgreSQL client in Node.js to listen for notifications from the database.
+
+javascript
+Copy code
+// db.js
+const { Pool } = require('pg');
+require('dotenv').config();
+
+const pool = new Pool({
+  host: process.env.PGHOST,
+  user: process.env.PGUSER,
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE,
+  port: process.env.PGPORT,
+});
+
+pool.connect((err, client) => {
+  if (err) throw err;
+
+  client.query('LISTEN estimation_updates'); // Listen for notifications
+
+  client.on('notification', async (msg) => {
+    console.log('Notification received:', msg);
+    // Emit an event when a notification is received
+    const data = await fetchEstimationSummary(); // Fetch updated data
+    io.emit('estimation-update', data);
+  });
+});
+
+async function fetchEstimationSummary() {
+  const query = `
+    SELECT 
+      COUNT(*) AS total,
+      COUNT(CASE WHEN status = 'new' THEN 1 END) AS new,
+      COUNT(CASE WHEN status = 'due' THEN 1 END) AS due,
+      COUNT(CASE WHEN status = 'completed' THEN 1 END) AS completed
+    FROM estimation_summary;
+  `;
+  const { rows } = await pool.query(query);
+  return rows[0];
+}
+
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+  fetchEstimationSummary,
+};
+Set Up Server for WebSocket Connections:
+
+In server.js, use socket.io to send the updated data to clients only when triggered by the database.
+
+javascript
+Copy code
+// server.js
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const cors = require('cors');
+const db = require('./db');
+require('dotenv').config();
+
+const app = express();
+app.use(cors());
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: '*' }
+});
+
+io.on('connection', (socket) => {
+  console.log('Client connected');
+  db.fetchEstimationSummary().then((data) => {
+    socket.emit('estimation-update', data); // Send initial data on connect
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
+
+server.listen(process.env.PORT, () => {
+  console.log(`Server running on http://localhost:${process.env.PORT}`);
+});
+Step 3: Angular Frontend Implementation
+Use the Angular code from the previous example, as it will automatically handle real-time updates whenever they are pushed by the server.
+
+This setup ensures the database only notifies the server when there’s an actual change in data. The server, in turn, pushes the update to all connected clients, achieving real-time updates with minimal load on both the backend and frontend.
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0.
 
 ## Development server
